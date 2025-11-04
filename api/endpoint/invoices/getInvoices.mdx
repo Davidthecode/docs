@@ -1,0 +1,189 @@
+---
+title: "Get Invoices"
+description: "Retrieve a list of invoices with optional filtering and pagination."
+openapi: "GET /invoices"
+---
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/invoices" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+You can also specify the fields to be returned using the `fields` query parameter.
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/invoices/64a8d1ccdff3e72ccc4a2983?fields=invoiceNumber,amount,status" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+```javascript Node.js
+import fetch from "node-fetch";
+
+const params = new URLSearchParams({
+  page: 1,
+  limit: 15,
+  fields: "invoiceNumber,amount,dueDate",
+});
+
+fetch(`https://api.equisettle.com/v1/invoices?${params.toString()}`, {
+  headers: {
+    Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
+  },
+})
+  .then((res) => res.json())
+  .then((json) => console.log(json))
+  .catch((err) => console.error("Error:", err));
+```
+
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+  "invoices": [
+    {
+      "invoiceNumber": "INV-2025-001",
+      "amount": 1500,
+      "dueDate": "2025-01-12T00:00:00.000Z",
+      "status": "unpaid",
+      "outstandingBalance": 1500,
+      "invoiceType": "standard",
+      "description": "Invoice for john doe",
+      "items": [
+        {
+          "name": "turtle shell",
+          "quantity": 1,
+          "unitPrice": 1000
+        },
+        {
+          "name": "car repair",
+          "quantity": 1,
+          "unitPrice": 500
+        }
+      ],
+      "case": {
+        "mappings": {
+          "firstName": "john",
+          "lastName": "doe",
+          "email": "johndoe@gmail.com"
+        },
+        "outstandingBalance": 50
+      },
+      "customerAgreement": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@company.com",
+        "phone": "+123456789"
+      },
+      "company": {
+        "name": "Tech Solutions Ltd",
+        "email": "contact@techsolutions.com",
+        "currency": "GBP"
+      },
+      "createdAt": "2025-01-01T09:45:30.000Z",
+      "updatedAt": "2025-01-05T11:20:00.000Z",
+      "isDue": false,
+      "category": "other",
+      "tax": 50,
+      "discount": 0,
+      "statusNote": null,
+      "autoConvertToCase": false
+    },
+    {
+      "..."
+    }
+  ],
+  "pagination": {
+    "total": 40,
+    "page": 1,
+    "limit": 10,
+    "hasmore": true
+  },
+}
+```
+</ResponseExample>
+
+### Query Parameters
+
+<ParamField query="page" type="integer" defaultValue="1">
+  {" "}
+  The page number for pagination. Must be a non-negative integer.{" "}
+</ParamField>
+<ParamField query="limit" type="integer" defaultValue="10">
+  {" "}
+  The number of invoices to return per page. Must be a positive integer ≤ 50.{" "}
+</ParamField>
+<ParamField query="fields" type="string">
+  {" "}
+  A comma-separated list of fields to return for each invoice. For example: `fields=invoiceNumber,amount,status`{" "}
+</ParamField>
+<Note>
+  {" "}
+  Any query parameters other than `page`, `limit`, and `fields` will result in a
+  `400 Bad Request` error.{" "}
+</Note>
+
+### Example Error Responses
+
+Invalid limit:
+
+```json
+{
+  "status": 400,
+  "code": "ERR_LIMIT_EXCEEDED",
+  "message": "Limit cannot exceed 50"
+}
+```
+
+Invalid page or limit:
+
+```json
+{
+  "status": 400,
+  "code": "ERR_INVALID_LIMIT",
+  "message": "Limit must be a positive integer"
+}
+```
+
+Invalid query params:
+
+```json
+{
+  "status": 400,
+  "code": "BAD_REQUEST",
+  "message": "Invalid query parameter(s): sort"
+}
+```
+
+### Available Invoice Fields
+
+The following fields can be requested when fetching an invoice:
+
+- invoiceNumber
+- amount
+- dueDate
+- status
+- outstandingBalance
+- invoiceType
+- description
+- items
+- case
+- customerAgreement
+- isDue
+- salesOrder
+- category
+- tax
+- discount
+- statusNote
+- autoConvertToCase
+
+### Populated References
+
+The following related resources are automatically populated if part of the selected fields:
+
+- case
+- company
+- customerAgreement
+- salesOrder

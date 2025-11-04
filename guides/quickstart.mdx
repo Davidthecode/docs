@@ -1,0 +1,61 @@
+---
+title: "Quickstart"
+description: "Get started with Equisettle. create your company account, generate your API key, and make your first API request."
+---
+
+<Steps>
+<Step title="Create your company account">
+To get started, visit [equisettle.twosvn.co.uk](https://equisettle.twosvn.co.uk) and click **Sign Up**.  
+You can register your company using your business email and basic details.
+
+Once your account is created, you’ll land on your company dashboard — where you can manage invoices, payments, and customers.
+
+<Frame>
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="/images/-dark.jpeg"
+    />
+    <img
+      src="/images/eqs-signin-ui.png"
+      alt="EquiSettle sign-up page"
+    />
+  </picture>
+</Frame>
+</Step>
+
+<Step title="Generate your API key">
+ Head to **Settings → API Access** in your dashboard.  
+Click **Generate API Key** — this key authenticates your company when calling Equisettle’s API.
+
+<Note>
+  Keep your API key safe. It provides access to your company’s A/R data and
+  should never be shared publicly.
+</Note>
+
+<Frame>
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="/images/onboarding-dark.jpeg"
+    />
+    <img
+     src="/images/eqs-api-key-ui.png"
+      alt="Create a new workspace modal"
+    />
+  </picture>
+</Frame>
+</Step>
+
+<Step title="Make your first API request">
+You can now start interacting with Equisettle’s API.
+
+Here’s a quick example of how to fetch your company’s invoices using `curl`:
+
+```bash
+curl -X GET "https://api.equisettle.twosvn.co.uk/v1/invoices" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</Step>
+</Steps>

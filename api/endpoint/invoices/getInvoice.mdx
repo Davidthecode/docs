@@ -1,0 +1,156 @@
+---
+title: "Get Invoice"
+description: "Retrieve a single invoice by its unique identifier."
+openapi: "GET /invoices/{id}"
+---
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/invoices/64a8d1ccdff3e72ccc4a2983" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+You can also specify the fields to be returned using the `fields` query parameter.
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/invoices/64a8d1ccdff3e72ccc4a2983?fields=invoiceNumber,amount,status" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+```javascript Node.js
+import fetch from "node-fetch";
+
+const invoiceId = "64a8d1ccdff3e72ccc4a2983";
+const params = new URLSearchParams({ fields: "invoiceNumber,amount,dueDate" });
+
+fetch(
+  `https://api.equisettle.com/v1/invoices/${invoiceId}?${params.toString()}`,
+  {
+    headers: {
+      Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
+    },
+  }
+)
+  .then((res) => res.json())
+  .then((json) => console.log(json))
+  .catch((err) => console.error("Error:", err));
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json
+{
+  "invoice": {
+    "invoiceNumber": "INV-2025-001",
+    "amount": 1500,
+    "dueDate": "2025-01-12T00:00:00.000Z",
+    "status": "unpaid",
+    "outstandingBalance": 1500,
+    "invoiceType": "standard",
+    "description": "Invoice for john doe",
+    "items": [
+      {
+        "name": "turtle shell",
+        "quantity": 1,
+        "unitPrice": 1000
+      },
+      {
+        "name": "car repair",
+        "quantity": 1,
+        "unitPrice": 500
+      }
+    ],
+    "case": {
+      "mappings": {
+        "firstName": "john",
+        "lastName": "doe",
+        "email": "johndoe@gmail.com"
+      },
+      "outstandingBalance": 50
+    },
+    "customerAgreement": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@company.com",
+      "phone": "+123456789"
+    },
+    "company": {
+      "name": "Tech Solutions Ltd",
+      "email": "contact@techsolutions.com",
+      "currency": "GBP"
+    },
+    "createdAt": "2025-01-01T09:45:30.000Z",
+    "updatedAt": "2025-01-05T11:20:00.000Z",
+    "isDue": false,
+    "category": "other",
+    "tax": 50,
+    "discount": 0,
+    "statusNote": null,
+    "autoConvertToCase": false
+  }
+}
+```
+
+</ResponseExample>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  {" "}
+  The unique identifier of the invoice you want to retrieve.{" "}
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="fields" type="string">
+  {" "}
+  A comma-separated list of specific fields to return in the response. For example:
+  `fields=invoiceNumber,amount,status`{" "}
+</ParamField> <Note>
+  {" "}
+  If you request any invalid or disallowed fields, the API will return a `400 Bad
+  Request` error with a detailed message.{" "}
+</Note>
+
+```json
+{
+  "status": 400,
+  "code": "BAD_REQUEST",
+  "message": "Invalid fields requested. The following fields are invalid or not allowed: invalidField",
+  "details": "The following fields are invalid or not allowed: invalidField"
+}
+```
+
+### Available Invoice Fields
+
+The following fields can be requested when fetching an invoice:
+
+- invoiceNumber
+- amount
+- dueDate
+- status
+- outstandingBalance
+- invoiceType
+- description
+- items
+- case
+- customerAgreement
+- isDue
+- salesOrder
+- category
+- tax
+- discount
+- statusNote
+- autoConvertToCase
+
+### Populated References
+
+The following related resources are automatically populated if part of the selected fields:
+
+- case
+- company
+- customerAgreement
+- salesOrder

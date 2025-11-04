@@ -1,0 +1,226 @@
+---
+title: Webhooks
+description: Use webhooks to automate workflows and stay in sync with real-time invoice updates.
+---
+
+Webhooks in **Equisettle** allow your systems to automatically react to important events such as invoice creation, updates, payments, and overdue alerts, without needing to poll the API.
+
+When a subscribed event occurs, Equisettle sends an HTTP `POST` request to your configured webhook endpoint with the event payload.  
+All webhooks are securely delivered using **[Upstash QStash](https://upstash.com)** to ensure reliability and message integrity.
+
+## Use Cases
+
+### Automated Accounting Integrations
+
+Keep your accounting or ERP system automatically updated when new invoices are created, updated, or marked as paid — no manual syncs required.
+
+### Real-Time Notifications
+
+Trigger Slack, email, or SMS alerts when key events occur (e.g., overdue invoices, case completions).
+
+### Analytics & Reporting Pipelines
+
+Stream live data to your BI tools whenever new A/R activity happens, allowing dashboards to stay up to date.
+
+---
+
+## Setting Up Webhooks in Equisettle
+
+1. **Go to Webhooks in your Dashboard**:  
+   Navigate to the **Webhooks** section under developers section in the sidebar.
+
+2. **Create a New Webhook**:  
+   Click **Create Webhook** and fill out the following details:
+
+   - **Name**: A descriptive name (e.g., “Invoice Sync)
+   - **Endpoint (URL)**: The HTTPS endpoint where Equisettle will send events.
+   - **Events**: Select one or more events to listen for (see [Event Types](#event-types)).
+
+3. **Save the Webhook**:  
+   Once created, Equisettle will immediately begin sending events when they occur.
+
+4. **Copy the Webhook Secret**:  
+   Use the **Copy Secret** option to store your webhook secret securely, you’ll use it to verify event signatures.
+
+   <Note>
+     Secrets are only shown once when the webhok is created you can rotate the
+     secret if you want to generate another one
+   </Note>
+
+---
+
+## Verifying Webhook Requests
+
+To ensure webhook requests are authentic and untampered, every webhook request includes a signature header — `x-ar-signature`.  
+You must verify this signature using the secret key you configured in the dashboard.
+
+Here’s how to verify a webhook in **Node.js**:
+
+```js
+// verifyWebhook.js
+import crypto from "crypto";
+
+/**
+ * Normalizes QStash-wrapped body: removes outer quotes if present
+ */
+function normalizeBody(rawBody) {
+  try {
+    const outerString = rawBody.toString("utf8");
+    const cleanJsonString = JSON.parse(outerString); // removes escaped quotes
+    return Buffer.from(cleanJsonString, "utf8");
+  } catch {
+    return rawBody; // fallback: use raw body if not wrapped
+  }
+}
+
+/**
+ * Verifies a webhook payload from Equisettle
+ * @param {string} secret - Your webhook secret
+ * @param {string} signatureHeader - The "x-ar-signature" header
+ * @param {Buffer} rawBody - raw request body buffer (not the parsed object)
+ * @returns {object} Parsed payload { event, data }
+ */
+function verifyWebhookSignature(secret, signatureHeader, rawBody) {
+  if (!signatureHeader || typeof signatureHeader !== "string") {
+    throw new Error("Missing or invalid signature header");
+  }
+
+  if (!signatureHeader?.startsWith("sha256=")) {
+    throw new Error("Invalid signature format");
+  }
+
+  if (!secret) {
+    throw new Error("Missing webhook secret");
+  }
+
+  const expectedSig = signatureHeader.slice(7);
+  const bodyToSign = normalizeBody(rawBody);
+
+  const computedSig = crypto
+    .createHmac("sha256", secret)
+    .update(bodyToSign)
+    .digest("hex");
+
+  const expectedBuf = Buffer.from(expectedSig, "hex");
+  const computedBuf = Buffer.from(computedSig, "hex");
+
+  if (expectedBuf.length !== computedBuf.length) {
+    throw new Error("Invalid signature");
+  }
+
+  if (!crypto.timingSafeEqual(expectedBuf, computedBuf)) {
+    throw new Error("Invalid signature");
+  }
+
+  return JSON.parse(bodyToSign.toString("utf8"));
+}
+
+export default verifyWebhookSignature;
+```
+
+```javascript
+// server.js
+import express from "express";
+import { verifyWebhookSignature } from "./verifyWebhook.js";
+
+const app = express();
+
+// Equisettle sends raw JSON
+app.use(express.raw({ type: "application/json" }));
+
+app.post("/webhooks/equisettle", (req, res) => {
+  const signature = req.headers["x-ar-signature"];
+  const secret = process.env.EQUISETTLE_WEBHOOK_SECRET;
+
+  if (!signature || !secret) {
+    return res.status(400).json({ error: "Missing signature or secret" });
+  }
+
+  try {
+    const payload = verifyWebhookSignature(secret, signature, req.body);
+
+    console.log("Event:", payload.event);
+    console.log("Data:", payload.data);
+
+    // payload: { event, data }
+    console.log("Received event:", payload.event);
+    // handle payload.data safely here...
+
+    res.status(200).send("OK");
+  } catch (err) {
+    console.error("Webhook verification failed:", err.message);
+    res.status(401).send("Invalid signature");
+  }
+});
+
+app.listen(3000, () => console.log("Webhook listener running on port 3000"));
+```
+
+## Request Payload
+
+When a webhook event is triggered, Equisettle sends a POST request to your endpoint with a JSON body.
+All webhook requests include:
+
+- event: the event type (e.g. "invoice.created")
+- data: the relevant resource data
+
+### Example for an invoice.created event:
+
+```json
+{
+  "event": "invoice.created",
+  "data": {
+    "id": "670b1a5a1f932b7b4a3f22e9",
+    "invoiceNumber": "INV-0456",
+    "status": "unpaid",
+    "dueDate": "2025-11-30T00:00:00.000Z",
+    "amount": 2300,
+    "currency": "GBP",
+    "invoiceType": "standalone"
+  }
+}
+```
+
+## Example for an invoice.paid event:
+
+```json
+{
+  "event": "invoice.paid",
+  "data": {
+    "id": "670b1a5a1f932b7b4a3f22e9",
+    "invoiceNumber": "INV-0456",
+    "status": "paid",
+    "amount": 2300,
+    "outstandingBalance": 0,
+    "currency": "GBP",
+    "updatedAt": "2025-11-04T09:00:00.000Z"
+  }
+}
+```
+
+## Security
+
+Equisettle ensures reliable and secure webhook delivery through:
+
+- Upstash QStash for guaranteed message retries
+- HTTPS-only endpoints
+- HMAC-SHA256 signatures for integrity verification
+- Event-level filtering to ensure only subscribed events are sent
+
+If your endpoint returns a non-2xx status code, QStash will automatically retry delivery.
+
+## Event Types
+
+Equisettle currently supports the following event types:
+
+| Event           | Description                                                        |
+| --------------- | ------------------------------------------------------------------ |
+| invoice.created | Triggered when a new invoice is created.                           |
+| invoice.updated | Triggered when an invoice’s data (amount, due date, etc.) changes. |
+| invoice.paid    | Triggered when an invoice is fully paid                            |
+| invoice.overdue | Triggered when an invoice passes its due date without payment.     |
+
+<Note>
+  {" "}
+  More webhook event types will be added soon, stay tuned for updates.{" "}
+</Note>

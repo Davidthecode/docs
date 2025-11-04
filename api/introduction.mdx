@@ -1,0 +1,103 @@
+---
+title: "Introduction"
+description: "Welcome to the Equisettle API."
+---
+
+The Equisettle API is organized around **REST** principles.  
+It provides predictable, resource-oriented endpoints, uses standard HTTP verbs and response codes, and returns **JSON-encoded** responses.
+
+## Base URL
+
+All API requests are made over **HTTPS** from the following base domain:
+
+`https://api.equisettle.com/v1/`
+
+The general structure of a request looks like:
+
+`https://api.equisettle.com/v1/:resource`
+
+All request and response bodies are in **JSON** format.
+
+## Authentication
+
+Every API request must include your company’s **API key** for authentication.  
+You can find your API key under **Developers → API** in your Equisettle dashboard.
+
+Include it in the `Authorization` header like so:
+
+```bash
+curl -X GET "https://api.equisettle.com/v1/invoices" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+<Note>
+  Replace `YOUR_API_KEY` with your actual API key. Keep this key secure — it
+  provides access to your company’s data
+</Note>
+
+If your API key is missing or invalid, the API will respond with:
+
+```json
+{
+  "error": "Access Denied",
+  "message": "Invalid API Key."
+}
+```
+
+## Checking API status
+
+You can quickly verify that the Equisettle API server is active by pinging the root or status endpoint.
+
+Example
+
+```bash
+curl https://api.equisettle.com
+```
+
+Response
+
+```bash
+Hello from Equisettle
+```
+
+Or check the health status:
+
+```bash
+curl https://api.equisettle.com/status
+```
+
+Response
+
+```json
+{
+  "status": "ok"
+}
+```
+
+## Next steps
+
+Once you’ve confirmed your API connection, explore the available endpoints to start integrating with Equisettle:
+
+<CardGroup cols={2}>
+  {" "}
+  <Card
+    title="Invoices"
+    href="/api/endpoint/invoices/getInvoice"
+    icon="receipt"
+  />
+  <Card
+    title="Remittances"
+    href="/api/endpoint/remittance/getRemittances"
+    icon="arrows-left-right"
+  />
+  <Card
+    title="Company"
+    href="/api/endpoint/company/getCompany"
+    icon="building"
+  />
+  <Card
+    title="Metrics"
+    href="/api/endpoint/metrics/getMetrics"
+    icon="bar-chart"
+  />{" "}
+</CardGroup>{" "}

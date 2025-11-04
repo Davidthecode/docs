@@ -1,0 +1,140 @@
+---
+title: "Get Remittances"
+description: "Retrieve a list of remittances for a company."
+openapi: "GET /remittances"
+---
+
+<RequestExample>
+
+```bash cURL
+# Get the first page of remittances (default 10)
+curl -X GET "https://api.equisettle.com/v1/remittances" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+# Get remittances with specific fields and custom pagination
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/remittances?page=2&limit=20&fields=remittanceId,amount,status&viewType=legacy" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+```javascript Node.js
+import fetch from "node-fetch";
+
+const params = new URLSearchParams({
+  page: 1,
+  limit: 15,
+  fields: "remittanceId,amount,status,paymentDate",
+  viewType: "all",
+});
+
+fetch(`https://api.equisettle.com/v1/remittances?${params.toString()}`, {
+  headers: {
+    Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
+  },
+})
+  .then((res) => res.json())
+  .then((json) => console.log(json))
+  .catch((err) => console.error("Error:", err));
+```
+
+</RequestExample>
+
+<ResponseExample> 
+```json 
+{
+  "remittances": [
+    {
+      "remittanceId": "RM-2025-001",
+      "transactionType": "credit",
+      "amount": 1500,
+      "paymentDate": "2025-01-12T00:00:00.000Z",
+      "currency": "GBP",
+      "paymentMethod": "bank_transfer",
+      "status": "completed",
+      "notes": "Payment received for invoice INV-2025-001",
+      "createdAt": "2025-01-01T09:45:30.000Z",
+      "updatedAt": "2025-01-05T11:20:00.000Z",
+      "company": {
+        "name": "Tech Solutions Ltd",
+        "email": "contact@techsolutions.com",
+        "currency": "GBP"
+      },
+      "invoice": {
+        "invoiceNumber": "INV-2025-001",
+        "amount": 1500,
+        "status": "paid"
+      }
+    },
+    {
+      "..."
+    }
+  ],
+  "pagination": {
+    "total": 120,
+    "page": 1,
+    "limit": 10,
+    "hasmore": true
+  }
+}
+```
+ </ResponseExample>
+
+## Query Parameters
+
+{" "}
+
+<ParamField query="page" type="integer" defaultValue="1">
+  The page number for pagination. Must be a non-negative integer.
+</ParamField>
+<ParamField query="limit" type="integer" defaultValue="10">
+  The number of remittances to return per page. Must be a positive integer ≤ 50.
+</ParamField>
+<ParamField query="fields" type="string">
+  {" "}
+  A comma-separated list of remittance fields to return. For example: `fields=remittanceId,amount,status`.{" "}
+</ParamField> <ParamField query="viewType" type="string" defaultValue="all">
+  {" "}
+  Filter remittances by view type. Valid values: `all`, `legacy`, `scl`.{" "}
+</ParamField> <Note>
+  {" "}
+  Any query parameters other than `page`, `limit`, `fields`, and `viewType` will
+  result in a `400 Bad Request` error.{" "}
+</Note>
+
+## Available Remittance Fields
+
+- remittanceId
+- transactionType
+- amount
+- paymentDate
+- currency
+- paymentMethod
+- processorReference
+- lastFourDigits
+- status
+- notes
+- isRefund
+- refundReason
+- refundDate
+- isClosed
+- disputeType
+- disputeResolutionStatus
+- qualityStatus
+- createdAt
+- updatedAt
+
+## Relationships / Populated References
+
+- company
+- invoice
+- case
+- customerAgreement
+- paymentPlan
+- eqsInvoice
+- salesOrder
+- purchaseOrder
+- supplier
+- warehouse
+- productDetails

@@ -1,0 +1,133 @@
+---
+title: "Update Invoice"
+description: "Update an existing invoice's details such as amount, due date, status, or invoice number."
+openapi: "PUT /invoices/{id}"
+---
+
+<RequestExample>
+
+```bash cURL
+curl -X PUT "https://api.equisettle.com/v1/invoices/64a8d1ccdff3e72ccc4a2983" \
+  -H "Authorization: API-Key YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1200,
+    "dueDate": "2025-12-15",
+    "status": "paid",
+    "invoiceNumber": "INV-2025-002"
+  }'
+```
+
+```javascript Node.js
+import fetch from "node-fetch";
+
+const invoiceId = "64a8d1ccdff3e72ccc4a2983";
+const body = {
+  amount: 1200,
+  dueDate: "2025-12-15",
+  status: "paid",
+  invoiceNumber: "INV-2025-002",
+};
+const params = new URLSearchParams({ fields: "amount,dueDate,status" });
+
+fetch(
+  `https://api.equisettle.com/v1/invoices/${invoiceId}?${params.toString()}`,
+  {
+    method: "PUT",
+    headers: {
+      Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  }
+)
+  .then((res) => res.json())
+  .then((json) => console.log(json))
+  .catch((err) => console.error("Error:", err));
+```
+
+</RequestExample> 
+<ResponseExample>
+
+```json
+{
+  "invoice": {
+    "invoiceNumber": "INV-2025-001",
+    "amount": 1500,
+    "dueDate": "2025-01-12T00:00:00.000Z",
+    "status": "unpaid",
+    "outstandingBalance": 1500,
+    "invoiceType": "standard",
+    "description": "Invoice for john doe",
+    "items": [
+      {
+        "name": "turtle shell",
+        "quantity": 1,
+        "unitPrice": 1000
+      },
+      {
+        "name": "car repair",
+        "quantity": 1,
+        "unitPrice": 500
+      }
+    ],
+    "case": {
+      "mappings": {
+        "firstName": "john",
+        "lastName": "doe",
+        "email": "johndoe@gmail.com"
+      },
+      "outstandingBalance": 50
+    },
+    "customerAgreement": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@company.com",
+      "phone": "+123456789"
+    },
+    "company": {
+      "name": "Tech Solutions Ltd",
+      "email": "contact@techsolutions.com",
+      "currency": "GBP"
+    },
+    "createdAt": "2025-01-01T09:45:30.000Z",
+    "updatedAt": "2025-01-05T11:20:00.000Z",
+    "isDue": false,
+    "category": "other",
+    "tax": 50,
+    "discount": 0,
+    "statusNote": null,
+    "autoConvertToCase": false
+  }
+}
+```
+
+ </ResponseExample>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the invoice to update.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="fields" type="string">
+  Optional. Comma-separated list of fields to return in the response. For
+  example: `fields=amount,dueDate,status`
+</ParamField>
+<Note>
+  {" "}
+  Any query parameters other than `fields` will result in a `400 Bad Request` error.{" "}
+</Note>
+
+## Request Body
+
+You can update the following fields for an invoice:
+
+| Field         | Type   | Description                                                                                       |
+| ------------- | ------ | ------------------------------------------------------------------------------------------------- |
+| amount        | Number | Optional. The total amount of the invoice. Must be a positive number                              |
+| dueDate       | String | Optional. ISO 8601 date format (`YYYY-MM-DD`).                                                    |
+| status        | String | Optional. The status of the invoice Enum: `paid`, `unpaid`, `partially_paid`, `void`, `cancelled` |
+| invoiceNumber | String | Optional. Custom invoice number. If omitted, the existing invoiceNumber is retained.              |

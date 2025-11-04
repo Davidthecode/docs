@@ -1,0 +1,195 @@
+---
+title: "Company Metrics"
+description: "Retrieve metrics for the authenticated company across various categories."
+openapi: "GET /metrics/*metricType*"
+---
+
+<RequestExample>
+
+```bash cURL
+# Get case metrics for the past 90 days
+curl -X GET "https://api.equisettle.com/v1/metrics/cases?timeRange=90" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+```bash cURL
+# Get workflow metrics for the current year
+curl -X GET "https://api.equisettle.com/v1/metrics/workflow?timeRange=thisYear" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+```javascript Node.js
+import fetch from "node-fetch";
+
+const metricType = "cases"; // or "cases-volume", "customer-segments", "workflow", "engagements", "risk"
+const params = new URLSearchParams({ timeRange: "90" });
+
+fetch(
+  `https://api.equisettle.com/v1/metrics/${metricType}?${params.toString()}`,
+  {
+    headers: {
+      Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
+    },
+  }
+)
+  .then((res) => res.json())
+  .then((json) => console.log(json))
+  .catch((err) => console.error("Error:", err));
+```
+
+</RequestExample>
+
+## Query Parameters
+
+<ParamField query="timeRange" type="string">
+  Specifies the time range for the metrics. Valid values are `"30"`, `"90"`,
+  `"365"`, `"thisYear"`, or any positive number representing days.
+</ParamField>
+<Note>
+  {" "}
+  Only the `timeRange` query parameter is allowed. Any other query parameters will
+  result in a `400 Bad Request` error.{" "}
+</Note>
+
+## Available Metric Types
+
+- `/cases` – Basic case metrics
+- `/cases-volume` – Monthly case volume
+- `/customer-segments` – Customer segmentation metrics
+- `/workflow` – Workflow metrics
+- `/engagements` – Team and case engagement metrics
+- `/risk` – Financial, overdue, and dispute risk metrics
+
+## Example Responses
+
+`/cases`
+
+```json
+{
+  "totalCases": 120,
+  "activeCases": 35,
+  "totalAmount": 50000,
+  "upcomingDueDates": 10,
+  "assignedCasesPercentage": 80,
+  "highPriorityCases": 5
+}
+```
+
+`/cases-volume`
+
+```json
+{
+  "caseVolumeByMonth": [
+    { "month": "Jan", "cases": 15 },
+    { "month": "Feb", "cases": 20 },
+    { "month": "Mar", "cases": 10 }
+  ]
+}
+```
+
+`/customer-segments`
+
+```json
+{
+  "valueSegmentation": {
+    "segments": [
+      {
+        "_id": "small",
+        "total": 50
+      }
+    ],
+    "totalCustomers": 100,
+    "totalDebt": 25000
+  },
+  "paymentPlanAdoption": {
+    "segments": [],
+    "adoptionRate": 50
+  },
+  "customerEngagement": {
+    "segments": [],
+    "engagementRate": 75
+  },
+  "disputeRate": {
+    "segments": [],
+    "disputeRate": 5
+  },
+  "caseStatus": {
+    "segments": [],
+    "completionRate": 90
+  },
+  "assignmentStatus": {
+    "segments": [],
+    "assignmentRate": 80
+  },
+  "portfolioDistribution": {
+    "segments": []
+  },
+  "workflowProgress": {
+    "segments": []
+  }
+}
+```
+
+`/workflow`
+
+```json
+{
+  "creation": { "totalWorkflows": 25 },
+  "stages": [
+    { "stageName": "Review", "totalWorkflows": 10 },
+    { "stageName": "Approval", "totalWorkflows": 15 }
+  ]
+}
+```
+
+`/engagements`
+
+```json
+{
+  "communication": {
+    "totalComments": 200,
+    "totalFollowups": 150,
+    "averageCommentsPerCase": 1.3,
+    "averageFollowupsPerCase": 1.0,
+    "caseEngagementRate": 85
+  },
+  "followups": {
+    "status": {
+      "pending": {
+        "count": 50
+      }
+    },
+    "distribution": [
+      {
+        "priority": "high",
+        "type": "email",
+        "count": 30
+      }
+    ]
+  },
+  "teamActivity": [
+    {
+      "userId": "123",
+      "userName": "Alice",
+      "commentCount": 20,
+      "casesHandled": 15
+    }
+  ]
+}
+```
+
+`/risk`
+
+```json
+{
+  "financial": {
+    "totalOutstanding": 100000,
+    "averageDebt": 5000,
+    "totalCases": 50,
+    "highRiskCases": 5,
+    "highRiskRate": 10
+  },
+  "overdue": { "totalWithDueDate": 40, "overdueCases": 10, "overdueRate": 25 },
+  "dispute": { "totalDisputed": 5, "disputedRate": 10 }
+}
+```

@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "maple",
+  "name": "EquiSettle documentation",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -14,55 +14,56 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get started",
+            "icon": "rocket",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "guides/introduction",
+              "guides/quickstart"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Features",
+            "icon": "sparkles",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "/guides/webhooks"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API",
         "groups": [
           {
             "group": "API documentation",
             "pages": [
-              "api-reference/introduction"
+              "api/introduction"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Invoice",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api/endpoint/invoices/getInvoice",
+              "api/endpoint/invoices/getInvoices",
+              "api/endpoint/invoices/createInvoice",
+              "api/endpoint/invoices/updateInvoice"
+            ]
+          },
+          {
+            "group": "Remittance",
+            "pages": [
+              "api/endpoint/remittance/getRemittances"
+            ]
+          },
+          {
+            "group": "Company",
+            "pages": [
+              "api/endpoint/company/getCompany"
+            ]
+          },
+          {
+            "group": "Metric",
+            "pages": [
+              "api/endpoint/metrics/getMetrics"
             ]
           }
         ]
@@ -71,14 +72,9 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Community",
+          "href": "https://x.com/EquiSettle",
+          "icon": "X"
         }
       ]
     }
@@ -87,36 +83,22 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/EquiSettle",
+      "linkedin": "https://www.linkedin.com/company/equisettle"
     }
   }
 }

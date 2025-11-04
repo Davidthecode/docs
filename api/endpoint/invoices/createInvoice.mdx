@@ -1,0 +1,140 @@
+---
+title: "Create Invoice"
+description: "Create a new invoice, either as a standalone entry or associated with an existing case."
+openapi: "POST /invoices"
+---
+
+<RequestExample>
+
+```bash cURL
+# Create a standalone invoice
+curl -X POST "https://api.equisettle.com/v1/invoices" \
+  -H "Authorization: API-Key YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 500,
+    "dueDate": "2025-11-30",
+    "category": "payment",
+    "items": [{"description": "Item", "price": 500}],
+    "invoiceType": "standalone",
+    "customerAgreement": "67123456789abcde12345680",
+  }'
+```
+
+```bash cURL
+# Create a case-related invoice
+curl -X POST "https://api.equisettle.com/v1/invoices" \
+  -H "Authorization: API-Key YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1000,
+    "dueDate": "2025-12-31",
+    "invoiceNumber": "INV-001",
+    "category": "payment",
+    "items": [{"description": "Service", "price": 1000, "quantity": 1}],
+    "invoiceType": "case-related",
+    "case": "67123456789abcde12345679"
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+```json
+// Standalone response
+{
+  "invoice": {
+    "id": "672b5f6e8df3c1aa961e745f",
+    "invoiceNumber": "INV-001",
+    "amount": 500,
+    "dueDate": "2025-11-30T00:00:00.000Z",
+    "status": "unpaid",
+    "category": "payment",
+    "items": [
+      {
+        "description": "Service",
+        "quantity": 1,
+        "price": 1000
+      }
+    ],
+    "customerAgreement": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@company.com",
+      "phone": "+123456789"
+    },
+    "invoiceType": "standalone",
+    "createdAt": "2025-02-01T10:00:00.000Z"
+  }
+}
+```
+
+```json
+// Case related response
+{
+  "invoice": {
+    "id": "672b5f6e8df3c1aa961e745f",
+    "invoiceNumber": "INV-001",
+    "amount": 1000,
+    "dueDate": "2025-12-31T00:00:00.000Z",
+    "status": "unpaid",
+    "category": "payment",
+    "items": [
+      {
+        "description": "Service",
+        "quantity": 1,
+        "price": 1000
+      }
+    ],
+    "case": {
+      "mappings": {
+        "firstName": "john",
+        "lastName": "doe",
+        "email": "johndoe@gmail.com"
+      },
+      "outstandingBalance": 50
+    },
+    "invoiceType": "case-related",
+    "createdAt": "2025-02-01T10:00:00.000Z"
+  }
+}
+```
+
+</ResponseExample>
+
+### Request Body
+
+The structure of the request body varies based on the `invoiceType`:
+
+#### Common Fields (Required)
+
+| Field         | Type   | Description                                                            |
+| ------------- | ------ | ---------------------------------------------------------------------- |
+| amount        | Number | The total amount of the invoice. Must be a positive number             |
+| dueDate       | String | Due date in ISO 8601 format (`YYYY-MM-DD`).                            |
+| invoiceType   | String | Enum: "standalone" or "case-related"                                   |
+| category      | String | Enum: `accounts_receivable`, `expense`, `payment`, `other`             |
+| items         | Array  | List of items included in the invoice. Must include at least one item. |
+| invoiceNumber | String | Optional. If not provided, one will be generated                       |
+
+#### Standalone Invoice Fields
+
+| Field             | Type   | Description                                           |
+| ----------------- | ------ | ----------------------------------------------------- |
+| customerAgreement | String | Required. The ID of the associated customer agreement |
+
+#### Case-Related Invoice Fields
+
+| Field | Type   | Description                                                |
+| ----- | ------ | ---------------------------------------------------------- |
+| case  | String | Required. The ID of the case to associate the invoice with |
+
+#### Item Structure
+
+Each item object in the items array must follow the structure below:
+
+| Field       | Type   | Description                                  |
+| ----------- | ------ | -------------------------------------------- |
+| description | String | Required. Description of the item or service |
+| quantity    | Number | Required. Must be `≥ 0`                      |
+| price       | Number | Required. Must be `≥ 0`                      |

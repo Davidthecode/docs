@@ -1,0 +1,124 @@
+---
+title: "Get Company"
+description: "Retrieve the details of the authenticated company."
+openapi: "GET /company"
+---
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/company" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+# Get company details with specific fields
+
+```bash cURL
+curl -X GET "https://api.equisettle.com/v1/company?fields=name,email,currency,subscription" \
+  -H "Authorization: API-Key YOUR_API_KEY"
+```
+
+```javascript Node.js
+import fetch from "node-fetch";
+
+const params = new URLSearchParams({
+  fields: "name,email,currency,subscription",
+});
+
+fetch(`https://api.equisettle.com/v1/company?${params.toString()}`, {
+  headers: {
+    Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
+  },
+})
+  .then((res) => res.json())
+  .then((json) => console.log(json))
+  .catch((err) => console.error("Error:", err));
+```
+
+</RequestExample>
+ <ResponseExample>
+```json 
+{
+  "company": {
+    "name": "Tech Solutions Ltd",
+    "email": "contact@techsolutions.com",
+    "currency": "GBP",
+    "companyType": "LLC",
+    "billingAddress": "123 Tech Street, London, UK",
+    "registrationNumber": "12345678",
+    "teams": [
+      {
+        "name": "my team",
+        "description": "my first company team",
+        "members": ["6900ba5cc6c93edfaf7a8e69"],
+        "createdAt": "2025-01-01T00:00:00.000Z"
+      },
+      {
+        "..."
+      }
+    ],
+    "enableDefaultWorkflows": true,
+    "lockedPages": [
+      "admin-settings"
+      "..."
+    ],
+    "isActive": true,
+    "subscription": {
+      "plan": "Pro",
+      "status": "active",
+      "startDate": "2025-01-01T00:00:00.000Z",
+      "endDate": "2025-12-31T23:59:59.000Z"
+    },
+    "autoConvertOverdueInvoices": false,
+    "defaultWorkflows": [
+      "6900ba5cc6c93edfaf7a8e69",
+      "367910ba5cc6c93edfaf4a8e47",
+      "..."
+    ],
+    "workflows": [
+      "6900ba5cc6c93edfaf7a8e69",
+      "..."
+    ]
+  }
+}
+``` 
+ </ResponseExample>
+
+## Query Parameters
+
+{" "}
+
+<ParamField query="fields" type="string">
+  A comma-separated list of company fields to return. For example:
+  `fields=name,email,currency,subscription`.
+</ParamField>
+<Note>
+  {" "}
+  Any query parameters other than `fields` will result in a `400 Bad Request` error.{" "}
+</Note>
+
+## Available Company Fields
+
+- name
+- email
+- currency
+- companyType
+- billingAddress
+- registrationNumber
+- teams
+- enableDefaultWorkflows
+- lockedPages
+- isActive
+- subscription
+- autoConvertOverdueInvoices
+- defaultWorkflows
+- workflows
+
+## Populated References
+
+The following related resources are automatically populated if part of the selected fields:
+
+- admins
+- managers
+- users
+- subscription
