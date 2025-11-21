@@ -7,7 +7,7 @@ openapi: "PUT /invoices/{id}"
 <RequestExample>
 
 ```bash cURL
-curl -X PUT "https://api.equisettle.com/v1/invoices/64a8d1ccdff3e72ccc4a2983" \
+curl -X PUT "https://eqs-platform-api.onrender.com/v1/invoices/64a8d1ccdff3e72ccc4a2983" \
   -H "Authorization: API-Key YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -31,7 +31,7 @@ const body = {
 const params = new URLSearchParams({ fields: "amount,dueDate,status" });
 
 fetch(
-  `https://api.equisettle.com/v1/invoices/${invoiceId}?${params.toString()}`,
+  `https://eqs-platform-api.onrender.com/v1/invoices/${invoiceId}?${params.toString()}`,
   {
     method: "PUT",
     headers: {

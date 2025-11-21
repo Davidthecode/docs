@@ -8,14 +8,14 @@ openapi: "GET /remittances"
 
 ```bash cURL
 # Get the first page of remittances (default 10)
-curl -X GET "https://api.equisettle.com/v1/remittances" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/remittances" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
 # Get remittances with specific fields and custom pagination
 
 ```bash cURL
-curl -X GET "https://api.equisettle.com/v1/remittances?page=2&limit=20&fields=remittanceId,amount,status&viewType=legacy" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/remittances?page=2&limit=20&fields=remittanceId,amount,status&viewType=legacy" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
@@ -29,7 +29,7 @@ const params = new URLSearchParams({
   viewType: "all",
 });
 
-fetch(`https://api.equisettle.com/v1/remittances?${params.toString()}`, {
+fetch(`https://eqs-platform-api.onrender.com/v1/remittances?${params.toString()}`, {
   headers: {
     Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
   },

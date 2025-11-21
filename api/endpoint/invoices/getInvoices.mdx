@@ -7,14 +7,14 @@ openapi: "GET /invoices"
 <RequestExample>
 
 ```bash cURL
-curl -X GET "https://api.equisettle.com/v1/invoices" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/invoices" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
 You can also specify the fields to be returned using the `fields` query parameter.
 
 ```bash cURL
-curl -X GET "https://api.equisettle.com/v1/invoices/64a8d1ccdff3e72ccc4a2983?fields=invoiceNumber,amount,status" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/invoices/64a8d1ccdff3e72ccc4a2983?fields=invoiceNumber,amount,status" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
@@ -27,7 +27,7 @@ const params = new URLSearchParams({
   fields: "invoiceNumber,amount,dueDate",
 });
 
-fetch(`https://api.equisettle.com/v1/invoices?${params.toString()}`, {
+fetch(`https://eqs-platform-api.onrender.com/v1/invoices?${params.toString()}`, {
   headers: {
     Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
   },

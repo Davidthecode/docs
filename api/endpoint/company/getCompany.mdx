@@ -7,14 +7,14 @@ openapi: "GET /company"
 <RequestExample>
 
 ```bash cURL
-curl -X GET "https://api.equisettle.com/v1/company" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/company" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
 # Get company details with specific fields
 
 ```bash cURL
-curl -X GET "https://api.equisettle.com/v1/company?fields=name,email,currency,subscription" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/company?fields=name,email,currency,subscription" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
@@ -25,7 +25,7 @@ const params = new URLSearchParams({
   fields: "name,email,currency,subscription",
 });
 
-fetch(`https://api.equisettle.com/v1/company?${params.toString()}`, {
+fetch(`https://eqs-platform-api.onrender.com/v1/company?${params.toString()}`, {
   headers: {
     Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,
   },

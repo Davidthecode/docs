@@ -8,13 +8,13 @@ openapi: "GET /metrics/*metricType*"
 
 ```bash cURL
 # Get case metrics for the past 90 days
-curl -X GET "https://api.equisettle.com/v1/metrics/cases?timeRange=90" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/metrics/cases?timeRange=90" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
 ```bash cURL
 # Get workflow metrics for the current year
-curl -X GET "https://api.equisettle.com/v1/metrics/workflow?timeRange=thisYear" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/metrics/workflow?timeRange=thisYear" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
@@ -25,7 +25,7 @@ const metricType = "cases"; // or "cases-volume", "customer-segments", "workflow
 const params = new URLSearchParams({ timeRange: "90" });
 
 fetch(
-  `https://api.equisettle.com/v1/metrics/${metricType}?${params.toString()}`,
+  `https://eqs-platform-api.onrender.com/v1/metrics/${metricType}?${params.toString()}`,
   {
     headers: {
       Authorization: `API-Key ${process.env.EQUIS_API_KEY}`,

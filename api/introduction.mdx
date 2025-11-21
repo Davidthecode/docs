@@ -10,11 +10,11 @@ It provides predictable, resource-oriented endpoints, uses standard HTTP verbs a
 
 All API requests are made over **HTTPS** from the following base domain:
 
-`https://api.equisettle.com/v1/`
+`https://eqs-platform-api.onrender.com/v1/`
 
 The general structure of a request looks like:
 
-`https://api.equisettle.com/v1/:resource`
+`https://eqs-platform-api.onrender.com/v1/:resource`
 
 All request and response bodies are in **JSON** format.
 
@@ -26,7 +26,7 @@ You can find your API key under **Developers → API** in your Equisettle dashbo
 Include it in the `Authorization` header like so:
 
 ```bash
-curl -X GET "https://api.equisettle.com/v1/invoices" \
+curl -X GET "https://eqs-platform-api.onrender.com/v1/invoices" \
   -H "Authorization: API-Key YOUR_API_KEY"
 ```
 
@@ -51,7 +51,7 @@ You can quickly verify that the Equisettle API server is active by pinging the r
 Example
 
 ```bash
-curl https://api.equisettle.com
+curl https://eqs-platform-api.onrender.com
 ```
 
 Response
@@ -63,7 +63,7 @@ Hello from Equisettle
 Or check the health status:
 
 ```bash
-curl https://api.equisettle.com/status
+curl https://eqs-platform-api.onrender.com/status
 ```
 
 Response
